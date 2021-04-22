@@ -26,6 +26,20 @@ def getDataFrameFromApi (duration, sensor_code, height, flow) :
     # print(df.head())
     return df
 
+def getDataFromCsv():
+   data=pd.read_csv('Export_SerieHydro_LUCHON.csv',header=1)
+   #Delete the columns Qualification Contuinité and Méthode
+   data=data.drop(['Qualification','Continuité','Méthode'],1)
+
+   #Rename the columns Date (TU) and Valeur (mm)
+   data.columns=['date','height']
+
+   data['date'] = pd.to_datetime(data.date)
+   data.set_index('date', inplace=True)
+
+   print(data.head())
+   return data
+
 
 # Check for stationarity
 def checkForStationarity(df):
@@ -71,3 +85,5 @@ else :
     # Transmormation to stationary
     print("Transformation to stationary")
 # plotAcfAndPacf(df)
+
+df2 = getDataFromCsv()
