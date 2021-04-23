@@ -6,18 +6,11 @@ import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 
-start_date = datetime.date(2021, 4, 7)
-duration = 1
-sensor_code = "O004402001"
-height = 'H'
-flow = 'Q'
-
-
 
 #graph.show_measures(height_measures, flow_measures)
 
 # Puts the data into a pandas DataFrame from API hydro-eau eaufrance
-def getDataFrameFromApi (duration, sensor_code, height, flow) :
+def getDataFrameFromApi (start_date, duration, sensor_code, height, flow) :
     height_measures = donnees.get_measures(start_date, duration, sensor_code, height)
     flow_measures = donnees.get_measures(start_date, duration, sensor_code, flow)
     df = pd.DataFrame(height_measures, columns = ['date','height'])
@@ -40,6 +33,9 @@ def getDataFromCsv():
    print(data.head())
    return data
 
+def plotTheData(df):
+    df.plot()
+    plt.show()
 
 # Check for stationarity
 def checkForStationarity(df):
@@ -72,18 +68,3 @@ def plotAcfAndPacf(df):
 
     pacf_plot = plot_pacf(df.height)
     plt.show()
-
-
-
-# Main
-df = getDataFrameFromApi(duration, sensor_code, height, flow)
-isStationary = checkForStationarity(df)
-if isStationary :
-    # Execution of arma
-    print("Execution of arma")
-else :
-    # Transmormation to stationary
-    print("Transformation to stationary")
-# plotAcfAndPacf(df)
-
-df2 = getDataFromCsv()
