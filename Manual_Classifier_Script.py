@@ -1,6 +1,5 @@
 # L for linear 
 # R for reccurent patern
-# S for Starting flood
 # F for flood
 # N no pattern
 
@@ -8,7 +7,7 @@ import pandas
 import matplotlib.pyplot as plt
 import os
 
-classified_data_path = "D:Desktop\Prog\L3\BE\ClassifiedData"
+classified_data_path = "D:\Desktop\Prog\L3\BE\ClassifiedData"
 unclassified_data_path = "D:\Desktop\Prog\L3\BE\SomeData"
 
 # Parcourir la liste des fichier
@@ -30,8 +29,6 @@ for file in os.listdir(unclassified_data_path):
 
         if(res == 'l'):
             res = 'L'
-        if(res == 's'):
-            res = 'S'
         if(res == 'n'):
             res = 'N'
         if(res == 'r'):

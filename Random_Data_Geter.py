@@ -9,11 +9,21 @@ duration = 3 #days
 height = 'H'
 flow = 'Q'
 
+unclassified_path = r'D:Desktop\Prog\L3\BE\SomeData'
+
 sensor_list = ['O004402001', 'Y523501001',
-               'Q732252001', 'P608151001', 'L421071001', 'K447001001', 'I311301001', 'H517311001', 'U060001001', 'V415401001']
+               'Q732252001', 'P608151001', 
+               'L421071001', 'K447001001', 
+               'I311301001', 'H517311001', 
+               'U060001001', 'V415401001',
+               'H220101001', 'A341020001',
+               'A261020001', 'B222001001',
+               'A433301001', 'V453001002',
+               'V720000501', 'O256292001',]
 
-
-while(True) :
+i = 0
+while(i <= 60) :
+    
     # get random sensor
     sensor_code = sensor_list[random.randrange(0,len(sensor_list)-1,1)]
 
@@ -27,15 +37,12 @@ while(True) :
     #get measures
     height_measures = donnees.get_measures(start_date, duration, sensor_code, height)
     if(len(height_measures) > 2):
+        i += 1
         date_lst, height_lst = zip(*height_measures)
 
         # export to csv
-
-        # TODO
-        # normalise value
-
         height_lst = list(height_lst)
         date_lst = list(date_lst)
-        df =  pandas.DataFrame({'date': date_lst, 'height' : height_lst})
+        df =  pandas.DataFrame({'date': date_lst[::-1], 'height' : height_lst[::-1]})
         filename = str(start_date) + '_' + sensor_code
-        df.to_csv(r'D:Desktop\Prog\L3\BE\SomeData\\' +filename+ '.csv', index=False)
+        df.to_csv(unclassified_path + '\\' +filename+ '.csv', index=False)
