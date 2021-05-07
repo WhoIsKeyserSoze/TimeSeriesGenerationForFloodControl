@@ -5,6 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.seasonal import seasonal_decompose
+
 
 
 #graph.show_measures(height_measures, flow_measures)
@@ -16,6 +18,7 @@ def getDataFrameFromApi (start_date, duration, sensor_code, height, flow) :
     df = pd.DataFrame(height_measures, columns = ['date','height'])
     df['date'] = pd.to_datetime(df.date)
     df.set_index('date', inplace=True)
+    df.sort_values(by='date', inplace = True)
     # print(df.head())
     return df
 
@@ -38,7 +41,7 @@ def plotTheData(df):
     plt.show()
 
 # Check for stationarity
-def checkForStationarity(df):
+def checkForStationarity(x):
     stationary = False
     print("\n-------------------------------------------------------")
     print("Check for stationarity")
@@ -46,7 +49,6 @@ def checkForStationarity(df):
     print("Null Hypothesis : Non stationarity exists in the serie")
     print("Alternative Hypothesis : Data is stationary")
     print("-------------------------------------------------------")
-    x = df['height']
     result = adfuller(x)
     print("Result : ",result)
     print("\n")
@@ -67,4 +69,24 @@ def plotAcfAndPacf(df):
     plt.show()
 
     pacf_plot = plot_pacf(df.height)
+    plt.show()
+
+def stationarize(df):
+    # stationarisation
+    isStationary = False
+    dif = 0
+    while (not isStationary):
+        dif += 1
+        #Y(t) = Y(t)-Y(t-1)
+        df['height_diff'] = df['height'] - df['height'].shift(dif)
+        isStationary = checkForStationarity(df['height_diff'].dropna())
+
+    print("Data is now stationarized using (", dif,") difference")
+    plotTheData(df)
+    return df,dif
+
+def analyse_data(df):
+    df.sort_index(inplace=True)
+    res = seasonal_decompose(df['height'], model='multiplicative', period = int(len(df)/2))
+    res.plot()
     plt.show()
