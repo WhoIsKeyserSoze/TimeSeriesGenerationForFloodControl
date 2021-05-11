@@ -40,12 +40,15 @@ isStationary = timeSeries.checkForStationarity(df2['height'])
 if isStationary :
     d = 0
     # Execution of arma
-    # print("Execution of arma")
-    # process.arma_process(df2)
+    print("Execution of arma")
+    process.arma_process(df2,d)
     # print("Execution of auto_arima")
     # process.autoarima_process(df2)
     print("Execution of ARIMA")
     process.arima_process(df2, d)
+
+    print("Execution of sarima")
+    process.sarima_process(df2, d)
 else :
     # Transmormation to stationary
     print("Transformation to stationary")

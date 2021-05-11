@@ -23,15 +23,14 @@ def getDataFrameFromApi (start_date, duration, sensor_code, height, flow) :
     return df
 
 def getDataFromCsv():
-   data=pd.read_csv('Export_SerieHydro_LUCHON.csv',header=1)
+   data=pd.read_csv('Export_SerieHydro_LUCHON.csv',header=1, parse_dates=['Date (TU)'], index_col='Date (TU)', dayfirst = True)
    #Delete the columns Qualification Contuinité and Méthode
    data=data.drop(['Qualification','Continuité','Méthode'],1)
 
    #Rename the columns Date (TU) and Valeur (mm)
-   data.columns=['date','height']
+   data.rename(columns={'Valeur (mm)': 'height'}, index={'Date (TU)' : 'date' }, inplace = True)
+   data.index.names=['date']
 
-   data['date'] = pd.to_datetime(data.date)
-   data.set_index('date', inplace=True)
 
    print(data.head())
    return data
@@ -86,7 +85,7 @@ def stationarize(df):
     return df,dif
 
 def analyse_data(df):
-    df.sort_index(inplace=True)
-    res = seasonal_decompose(df['height'], model='multiplicative', period = int(len(df)/2))
+    # df.sort_index(inplace=True)
+    res = seasonal_decompose(df['height'], model='additive')
     res.plot()
     plt.show()

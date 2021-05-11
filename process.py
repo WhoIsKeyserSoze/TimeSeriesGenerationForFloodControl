@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.arima_model import ARMA
 from statsmodels.tsa.arima_model import ARIMA
+import statsmodels.api as sm
 import pmdarima as pm
 import warnings
 warnings.filterwarnings('ignore')
@@ -13,19 +14,19 @@ def arma_process(df, d):
     col = 'height'
     if d > 0 :
         col = 'height_diff'
-    plot_acf(df[col].iloc[1:],lags=30)
+    plot_acf(df[col].iloc[1:],lags=25)
     plt.show()
     p = int(input("p = "))
-    plot_pacf(df[col].iloc[1:],lags=30)
+    plot_pacf(df[col].iloc[1:],lags=24)
     plt.show()
     q = int(input("q = "))
     print("p = ", p, " q = ", q)
     model=ARMA(df[col].dropna(),order=(p,q))
     model_fit = model.fit()
     print(model_fit.summary())
-    start_date = df.index[int(0.5*(len(df)))]
+    start_date = df.index[int(0.12*(len(df)))]
     print("Start date : ",start_date)
-    end_date = df.index[-1]
+    end_date = df.index[int(0.3*(len(df)))]
     print("End date : ",end_date)
     df['ARMA_forecast'] = model_fit.predict(start= start_date, end= end_date, dynamic=True)
     df[[col, 'ARMA_forecast']].plot(figsize=(10, 5))
@@ -52,19 +53,42 @@ def arima_process(df, d):
     col = 'height'
     if d > 0 :
         col = 'height_diff'
-    plot_acf(df[col].iloc[1:],lags=30)
+    plot_acf(df[col].iloc[1:],lags=25)
     plt.show()
     p = int(input("p = "))
-    plot_pacf(df[col].iloc[1:],lags=30)
+    plot_pacf(df[col].iloc[1:],lags=24)
     plt.show()
     q = int(input("q = "))
     print("p = ", p, " q = ", q)
     model1=ARIMA(df[col].dropna(),order=(p,d,q))
     model_fit1=model1.fit()
-    start_date = df.index[int(0.5*(len(df)))]
+    start_date = df.index[int(0.12*(len(df)))]
     print("Start date : ",start_date)
-    end_date = df.index[-1]
+    end_date = df.index[int(0.3*(len(df)))]
     df['forecast_ARIMA'] = model_fit1.predict(start = start_date, end= end_date, dynamic= True)
     df[[col, 'forecast_ARIMA']].plot(figsize=(10, 5))
     plt.title('ARIMA Forecast vs Real Data')
+    plt.show()
+
+def sarima_process(df, d):
+    col = 'height'
+    if d > 0 :
+        col = 'height_diff'
+    plot_acf(df[col].iloc[1:],lags=25)
+    plt.show()
+    p = int(input("p = "))
+    plot_pacf(df[col].iloc[1:],lags=24)
+    plt.show()
+    q = int(input("q = "))
+    print("p = ", p, " q = ", q)
+    timeSeries.analyse_data(df)
+    m = int(input("m = "))
+    model=sm.tsa.statespace.SARIMAX(df[col],order=(p,d,q),seasonal_order=(p,d,q,m))
+    result=model.fit()
+    start_date = df.index[int(0.12*(len(df)))]
+    print("Start date : ",start_date)
+    end_date = df.index[int(0.3*(len(df)))]
+    df['forcast_SARIMA']=result.predict(start= start_date, end= end_date, dynamic=True)
+    df[[col,'forcast_SARIMA']].plot(figsize=(10, 5))
+    plt.title('SARIMA Forecast vs Real Data')
     plt.show()
