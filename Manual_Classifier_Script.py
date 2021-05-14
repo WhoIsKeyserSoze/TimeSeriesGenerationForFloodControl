@@ -7,8 +7,8 @@ import pandas
 import matplotlib.pyplot as plt
 import os
 
-classified_data_path = "D:\Desktop\Prog\L3\BE\ClassifiedData"
-unclassified_data_path = "D:\Desktop\Prog\L3\BE\SomeData"
+classified_data_path = "D:\Desktop\Prog\L3\BE\WorkBench\RandomST"
+unclassified_data_path = "D:\Desktop\Prog\L3\BE\WorkBench\RandomST"
 
 # Parcourir la liste des fichier
 for file in os.listdir(unclassified_data_path):
