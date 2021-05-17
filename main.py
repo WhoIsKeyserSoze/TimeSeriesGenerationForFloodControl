@@ -48,7 +48,7 @@ if isStationary :
     process.arima_process(df2, d)
 
     print("Execution of sarima")
-    # process.sarima_process(df2, d)
+    process.sarima_process(df2, d)
 
     print("Execution of auto arima")
     process.autoarima(df2['height'])

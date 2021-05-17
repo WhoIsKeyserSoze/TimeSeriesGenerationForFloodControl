@@ -83,7 +83,8 @@ def sarima_process(df, d):
     q = int(input("q = "))
     print("p = ", p, " q = ", q)
     # timeSeries.analyse_data(df)
-    m = int(input("m = "))
+    # m = int(input("m = "))
+    m = 60
     model=sm.tsa.statespace.SARIMAX(df[col],order=(p,d,q),seasonal_order=(p,d,q,m))
     result=model.fit()
     start_date = df.index[int(0.12*(len(df)))]
