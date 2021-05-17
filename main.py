@@ -35,7 +35,7 @@ flow = 'Q'
 # #With data from Csv file
 df2 = timeSeries.getDataFromCsv()
 timeSeries.plotTheData(df2)
-timeSeries.analyse_data(df2)
+# timeSeries.analyse_data(df2)
 isStationary = timeSeries.checkForStationarity(df2['height'])
 if isStationary :
     d = 0
@@ -48,7 +48,10 @@ if isStationary :
     process.arima_process(df2, d)
 
     print("Execution of sarima")
-    process.sarima_process(df2, d)
+    # process.sarima_process(df2, d)
+
+    print("Execution of auto arima")
+    process.autoarima(df2['height'])
 else :
     # Transmormation to stationary
     print("Transformation to stationary")
