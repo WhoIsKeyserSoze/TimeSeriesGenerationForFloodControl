@@ -7,17 +7,18 @@ base_obs_url = "https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?"
 sensor_code_format = "code_entite="
 start_date_format = "date_debut_obs="
 end_date_format = "date_fin_obs="
+time_step_format = "timestep="
 measures_type_format = "grandeur_hydro="
 nb_obs_format = "size="
 nb_obs = 4096
 
 # returns the list of measures took since the start_date 'date' during the 'duration' (in days) from the 'sensor'
 # it will return [] if an error occured (bad date entry or failure to connect to the hubeau's API)
-def get_measures(start_date, duration, sensor_code, measure_type) :
+def get_measures(start_date, duration, sensor_code, measure_type, time_step = 60) :
 
     # Checks if all arguments are valids
     end_date = start_date + datetime.timedelta(days = duration)
-    if(not (are_dates_in_range(start_date, end_date) and is_sensor_code_valide(sensor_code))):
+    if(not (are_dates_in_range(start_date, end_date))):
         return []
 
     # Builds URL
@@ -27,6 +28,7 @@ def get_measures(start_date, duration, sensor_code, measure_type) :
     URL += (start_date_format + start_date.strftime("%Y-%m-%d") + '&')
     URL += (end_date_format + end_date.strftime("%Y-%m-%d") + '&')
     URL += (nb_obs_format + str(nb_obs) + '&')
+    URL += (time_step_format + str(time_step) + '&')
     URL += (measures_type_format + measure_type)
 
     # Get string contening all infos
@@ -82,8 +84,3 @@ def are_dates_in_range(start_date, end_date) :
     diff_start = (datetime.date.today() - start_date)
     diff_end = (datetime.date.today() - end_date)
     return diff_start.days >= 0 and diff_start.days < 31 and diff_end.days >= 0 and diff_end.days < 31
-
-# checks if the sensor exists
-def is_sensor_code_valide(sensor_code) :
-    # TODO ?
-    return True
