@@ -11,21 +11,13 @@ def random_data_geter(nb_series, storage_path, period=29) :
     today = datetime.date.today()
     height = 'H'
 
-    sensor_list = ['O004402001', 'Y523501001',
-                'Q732252001', 'P608151001', 
-                'L421071001', 'K447001001', 
-                'I311301001', 'H517311001', 
-                'U060001001', 'V415401001',
-                'H220101001', 'A341020001',
-                'A261020001', 'B222001001',
-                'A433301001', 'V453001002',
-                'V720000501', 'O256292001']
+    sensor_list = donnees.get_all_active_sensors()
+    nb_sensors = len(sensor_list)
 
     i = 0
     while(i <= nb_series) :
-        
         # get random sensor
-        sensor_code = sensor_list[random.randrange(0,len(sensor_list)-1,1)]
+        sensor_code = sensor_list[random.randrange(0,nb_sensors-1,1)]
 
         # gen random date
         off_set = random.randrange(1,29,1)
@@ -35,6 +27,7 @@ def random_data_geter(nb_series, storage_path, period=29) :
         height_measures = donnees.get_measures(start_date, period, sensor_code, height)
         if(len(height_measures) > 2):
             i += 1
+            print(i)
             date_lst, height_lst = zip(*height_measures)
 
             # export to csv
@@ -81,7 +74,13 @@ def load_data(files_path, serie_len) :
 def normalize_array(arr):
     minValue = numpy.amin(arr)
     maxValue = numpy.amax(arr)
+    if(maxValue == minValue) :
+        maxValue += 1
     return (arr - minValue) / (maxValue - minValue), minValue, maxValue
+
+# reverse above function
+def un_normalize_array(arr, minV, maxV) :
+    return (arr * (maxV - minV)) + minV
 
 # return the array of series with all series individualy normalized
 # data.shape = (nb_series, nb_measurements, 1)

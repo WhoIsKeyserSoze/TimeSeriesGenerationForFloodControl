@@ -32,6 +32,7 @@ def get_measures(start_date, duration, sensor_code, measure_type, time_step = 60
     URL += (measures_type_format + measure_type)
 
     # Get string contening all infos
+
     infos = get_data(URL)
     if(infos == "") :
         return []
@@ -79,8 +80,43 @@ def extract_measures(infos) :
 
     return resultats
 
+def extract_sensor(infos) :
+    resultats = []
+
+    # For each measure
+    cursor = infos.find('"code_station"')
+    while(cursor >= 0) :  
+        # get the sensor's code
+        sensor = infos[cursor+16:cursor+26]
+
+        # add them to the list 
+        resultats.append(sensor)
+
+        # remove all treated infos and look for next measure
+        infos = infos[cursor+17:]
+        cursor = infos.find('"code_station"')
+
+    return resultats
+
 # returns if both dates are within 30 days from today and not in the future
 def are_dates_in_range(start_date, end_date) :
     diff_start = (datetime.date.today() - start_date)
     diff_end = (datetime.date.today() - end_date)
     return diff_start.days >= 0 and diff_start.days < 31 and diff_end.days >= 0 and diff_end.days < 31
+
+
+def get_all_active_sensors():
+    
+    region_code = [84, 27, 53, 24, 94, 44, 32, 11, 28, 75, 76, 52, 93]
+
+    sensor_code_list = []
+
+    # Builds URL
+    for code in region_code :
+        URL = "https://hubeau.eaufrance.fr/api/v1/hydrometrie/referentiel/stations?code_departement=&code_region="+ str(84) +"&en_service=true&format=json"
+        rawData = get_data(URL)
+
+        sensor_code_list += extract_sensor(rawData)
+
+    
+    return sensor_code_list
