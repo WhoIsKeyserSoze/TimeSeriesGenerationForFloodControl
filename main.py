@@ -1,5 +1,6 @@
 import timeSeries
 import process
+import CalculErreur
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
@@ -54,7 +55,7 @@ if isStationary :
     # print("Execution of auto arima")
     # aarima = process.autoarima(df2['height'])
 
-    plt.plot(figsize=(10, 5))
+    plt.plot(figsize=(20, 10))
     plt.plot(df2['height'], label= 'Real Data')
     plt.plot(arma,label='Arma Forecast')
     plt.plot(arima,label='Arima Forecast')
