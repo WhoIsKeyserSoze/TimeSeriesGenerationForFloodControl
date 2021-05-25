@@ -2,6 +2,7 @@ import timeSeries
 import process
 import pandas as pd
 import datetime
+import matplotlib.pyplot as plt
 
 # Parameters for getting data from api
 start_date = datetime.date(2021, 4, 7)
@@ -41,17 +42,27 @@ if isStationary :
     d = 0
     # Execution of arma
     print("Execution of arma")
-    process.arma_process(df2,d)
+    arma = process.arma_process(df2,d)
     # print("Execution of auto_arima")
     # process.autoarima_process(df2)
     print("Execution of ARIMA")
-    process.arima_process(df2, d)
+    arima = process.arima_process(df2, d)
 
     print("Execution of sarima")
-    process.sarima_process(df2, d)
+    sarima = process.sarima_process(df2, d)
 
-    print("Execution of auto arima")
-    process.autoarima(df2['height'])
+    # print("Execution of auto arima")
+    # aarima = process.autoarima(df2['height'])
+
+    plt.plot(figsize=(10, 5))
+    plt.plot(df2['height'], label= 'Real Data')
+    plt.plot(arma,label='Arma Forecast')
+    plt.plot(arima,label='Arima Forecast')
+    plt.plot(sarima,label='Sarima Forecast')
+    # plt.plot(aarima,label='Auto-Arima Forecast')
+    plt.title('Forecast vs Real Data')
+    plt.legend()
+    plt.show()
 else :
     # Transmormation to stationary
     print("Transformation to stationary")

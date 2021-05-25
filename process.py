@@ -25,14 +25,16 @@ def arma_process(df, d):
     model=ARMA(df[col].dropna(),order=(p,q))
     model_fit = model.fit()
     print(model_fit.summary())
-    start_date = df.index[int(0.12*(len(df)))]
+    start_date = df.index[int(0.5*(len(df)))]
     print("Start date : ",start_date)
-    end_date = df.index[int(0.3*(len(df)))]
+    end_date = df.index[int((len(df))-1)]
     print("End date : ",end_date)
     df['ARMA_forecast'] = model_fit.predict(start= start_date, end= end_date, dynamic=True)
     df[[col, 'ARMA_forecast']].plot(figsize=(10, 5))
     plt.title('ARMA Forecast vs Real Data')
     plt.show()
+
+    return df['ARMA_forecast']
 
 # def autoarima_process(df):
 #     df=df[:int(0.7*(len(df)))]
@@ -63,13 +65,15 @@ def arima_process(df, d):
     print("p = ", p, " q = ", q)
     model1=ARIMA(df[col].dropna(),order=(p,d,q))
     model_fit1=model1.fit()
-    start_date = df.index[int(0.12*(len(df)))]
+    start_date = df.index[int(0.5*(len(df)))]
     print("Start date : ",start_date)
-    end_date = df.index[int(0.3*(len(df)))]
+    end_date = df.index[int((len(df))-1)]
     df['forecast_ARIMA'] = model_fit1.predict(start = start_date, end= end_date, dynamic= True)
     df[[col, 'forecast_ARIMA']].plot(figsize=(10, 5))
     plt.title('ARIMA Forecast vs Real Data')
     plt.show()
+
+    return df['forecast_ARIMA']
 
 def sarima_process(df, d):
     col = 'height'
@@ -87,13 +91,14 @@ def sarima_process(df, d):
     m = 60
     model=sm.tsa.statespace.SARIMAX(df[col],order=(p,d,q),seasonal_order=(p,d,q,m))
     result=model.fit()
-    start_date = df.index[int(0.12*(len(df)))]
+    start_date = df.index[int(0.5*(len(df)))]
     print("Start date : ",start_date)
-    end_date = df.index[int(0.3*(len(df)))]
+    end_date = df.index[int((len(df))-1)]
     df['forcast_SARIMA']=result.predict(start= start_date, end= end_date, dynamic=True)
     df[[col,'forcast_SARIMA']].plot(figsize=(10, 5))
     plt.title('SARIMA Forecast vs Real Data')
     plt.show()
+    return df['forcast_SARIMA']
 
 def autoarima(data):
 
@@ -109,8 +114,8 @@ def autoarima(data):
    #plt.plot(fig)
 
    #train and test datasets to build model
-   train = data.loc['2013-06-01':'2013-07-01']
-   test = data.loc['2013-07-01':'2013-07-31']
+   train = data.loc[:data.index[int(0.5*(len(data)))]]
+   test = data.loc[data.index[int(0.5*(len(data)))]:]
 
    #Building Auto ARIMA model
    stepwise_model = auto_arima(train, start_p=1, d=1, start_q=1,
@@ -142,6 +147,7 @@ def autoarima(data):
    plt.plot(test,label='Test')
    plt.plot(future_forecast,label='Predicted')
    plt.legend(loc='upper left')
+   plt.title('AUTO-ARIMA Forecast vs Real Data')
    plt.show()
 
-   return 0
+   return future_forecast
