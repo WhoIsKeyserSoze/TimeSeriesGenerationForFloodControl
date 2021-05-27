@@ -1,34 +1,21 @@
 import matplotlib.pyplot as plt
 
+color_list = ['tab:blue', 'tab:green', 'tab:red', 'tab:brow', 'tab:cyan',
+              'tab:olive', 'tab:orange', 'tab:purple', 'tab:pink', 'tab:gray']
 
-def mesure(couple):
+def measure(couple):
     liste1, liste2 = zip(*couple)
     return list(liste2)
 
-def date(couple1):
-    liste1, liste2 = zip(*couple1)
+def date(couple):
+    liste1, liste2 = zip(*couple)
     return list(liste1)
 
-def show_measures(height, flow) :
-    x_val = []
-    y_val = []
-    z_val = []                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+def ShowMeasures(*stList) :                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
-    x_val = date(flow)
-    fig, ax1 = plt.subplots()
-
-    color = 'tab:red'
-    ax1.set_xlabel('date')
-    ax1.set_ylabel('water flow', color=color)
-    ax1.plot(x_val,mesure(flow), color=color)
-    ax1.tick_params(axis='y', labelcolor=color)
-
-    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-
-    color = 'tab:blue'
-    ax2.set_ylabel('height', color=color)  # we already handled the x-label with ax1
-    ax2.plot(x_val,mesure(height), color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
-
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    i = 0
+    for st in stList :
+        plt.plot(date(st), measure(st), color=color_list[i%len(color_list)])
+        i += 1
     plt.show()
+    
