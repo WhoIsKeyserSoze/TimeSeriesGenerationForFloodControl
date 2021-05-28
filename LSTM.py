@@ -1,4 +1,12 @@
 import datetime
+import os
+# removes tensor flow information
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+# 0 : infos warnings error
+# 1 : warnings error
+# 2 : errors
+# 3 : nothing
+
 from tensorflow import keras
 import numpy
 from LSTM_module import LSTMdata
@@ -10,8 +18,16 @@ model_path = r".\LSTM_module\network_storage"
 # returns a measure_list contening the model's prediction
 # makes 'pre_len' value prediction
 # a measure_list is a list of tuple (datetime.datetime, float)
+
+# If the measure_list does not make at least 24 measures, the LSTM network won't be able to make predictions
 def PredictFromList(measure_list, pred_len) :
 
+    #checking measure_list size
+    if(len(measure_list) < 24) :
+        Warning.warn("TimeSeriesGenerator.LSTM.PredictFromList : Not enought data. Make sure to give at least 24 measures")
+        return []
+
+    # data convertion section 
     # this algo doesn't need date to make prediction
     value_list = []
     for measure in measure_list :
@@ -23,18 +39,21 @@ def PredictFromList(measure_list, pred_len) :
         temp.append([value[0]])
     value_list = temp
     
+
+    # Prediction section
     # load model
     model = keras.models.load_model(model_path)
     predictions = []
-
+    # predicts
     for i in range(0, pred_len):
         pred = model.predict(numpy.array([value_list[-24:]]))
         value_list.append([pred[0][0]])
         predictions.append(pred[0][0])
-
+    # unormalise predictions
     predictions = LSTMdata.un_normalize_array(numpy.array(predictions), minV, maxV)
 
-    # add dates
+    # convert prediction to list of (date, float)
+    # we have float, just need to add dates to them
     result = []
     start_date = measure_list[-1][0]
     for i in range(0, pred_len):

@@ -1,5 +1,6 @@
 import urllib.request
 import datetime
+import warnings
 
 # Base url to build observations request
 base_obs_url = "https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?"
@@ -87,8 +88,10 @@ def get_data(URL) :
     # Check return code from the Hubeau API if there is no issue
     return_code=str(webUrl.getcode())
     if(return_code != "200" and return_code != "206") :
-        # mettre un warning
+        Warning.warn("dataGeter.get_data : Server responded with error code : " + str(return_code))
         return ""
+    if(return_code == "206") :
+        Warning.warn("dataGeter.get_data : Server responded with partial data")
     # Gather all the info requested
     data=webUrl.read()
 
