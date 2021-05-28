@@ -1,7 +1,7 @@
 import datetime
 import dataGeter
 import graph
-import process
+import process_pred
 
 date = datetime.date(2021, 5, 15)
 sensor_code = 'K268081001'
