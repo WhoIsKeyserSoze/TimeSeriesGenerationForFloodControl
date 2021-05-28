@@ -19,6 +19,8 @@ def takeDate(measure) :
 # returns the list of measures took since the start_date 'date' during the 'duration' (in days) from the 'sensor'
 # it will return [] if an error occured (bad date entry or failure to connect to the hubeau's API)
 # (datetime.datetime, int, str, str)
+# note that certain sensor does not have measure linked to them
+# in that case datageter will return an empty list
 def GetMeasures(start_date, duration, sensor_code, measure_type = 'H', time_step = 60) :
 
     # Checks if all arguments are valids
@@ -52,6 +54,8 @@ def GetMeasures(start_date, duration, sensor_code, measure_type = 'H', time_step
 # return a list contening 24 last measures (one per hour)
 # starting 4 hours from now
 # If today at 10AM i do a request i'll get 24 measures from yesterday 6AM to today 6AM
+# note that certain sensor does not have measure linked to them
+# in that case datageter will return an empty list
 def GetLastMeasures(sensor_code) :
     # It is necessary because it seems that sensor's measure take few hours to get on the hubeau's API
     hour_offset = 4
@@ -167,18 +171,18 @@ def GetAllActivesSensors():
 # using linear interpolation
 def interpolate(measures, timeStep) :
 
-    time = measures[0][0]
-    delta = datetime.timedelta(minutes=timeStep)
-    prevValue = measures[0][1]
-    i = 1
-    while(i < len(measures)):
-        theoricalTime = time + delta
-        if(theoricalTime < measures[i][0]) :
-            interValue = (prevValue + measures[i][1]) / 2
-            measures.insert(i, (theoricalTime, interValue))
-            i -= 1
-        prevValue = measures[i][1]
-        time = measures[i][0]
-        i += 1
-    
+    if(len(measures) > 2) :
+        time = measures[0][0]
+        delta = datetime.timedelta(minutes=timeStep)
+        prevValue = measures[0][1]
+        i = 1
+        while(i < len(measures)):
+            theoricalTime = time + delta
+            if(theoricalTime < measures[i][0]) :
+                interValue = (prevValue + measures[i][1]) / 2
+                measures.insert(i, (theoricalTime, interValue))
+                i -= 1
+            prevValue = measures[i][1]
+            time = measures[i][0]
+            i += 1
     return measures

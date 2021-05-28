@@ -1,5 +1,6 @@
 import datetime
 import os
+from sklearn import metrics
 # removes tensor flow information
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 # 0 : infos warnings error
@@ -11,8 +12,11 @@ from tensorflow import keras
 import numpy
 from LSTM_module import LSTMdata
 import dataGeter
+import averageError as ae
 
 model_path = r".\LSTM_module\network_storage"
+model = 'notloaded'
+isLoaded = False
 
 
 # returns a measure_list contening the model's prediction
@@ -42,7 +46,12 @@ def PredictFromList(measure_list, pred_len) :
 
     # Prediction section
     # load model
-    model = keras.models.load_model(model_path)
+    global model
+    global isLoaded
+    if( not isLoaded) : 
+        model = keras.models.load_model(model_path)
+        isLoaded = True
+
     predictions = []
     # predicts
     for i in range(0, pred_len):
@@ -73,4 +82,19 @@ def PredictFromSensor(sensor_code, pre_len, pred_starting_date=0) :
         start_date = pred_starting_date - datetime.timedelta(days=1)
         measures = dataGeter.GetMeasures(start_date, 1, sensor_code)
         return PredictFromList(measures, pre_len)
+
+
+# return a list of metrics calculated
+# [rmse, mae, mse, mape, r2score]
+# pre_len is the size of prediction
+# data_size is the number of timeseries used to make the average
+def ComputeError(pre_len, data_size) :
+    print("Error computing will take few minutes...")
+    data = ae.GetRandomTimeSeries(data_size)
+    tsData, tsReal = ae.CutTimeSeries(data, 24, pre_len)
     
+    tsPred = []
+    for ts in tsData :
+        tsPred.append(PredictFromList(ts, pre_len))
+
+    return ae.ComputeMetrics(tsData, tsPred, tsReal)
