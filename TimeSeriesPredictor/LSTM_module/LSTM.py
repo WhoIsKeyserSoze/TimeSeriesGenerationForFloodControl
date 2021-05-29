@@ -23,7 +23,7 @@ elif(platform.system() == 'Windows') :
         separator = '\\'
 else :
     warnings.warn("operating system not supported")
-model_path = __file__[:-8] + separator + "network_storage"
+model_path = __file__[:-8] + separator + "LSTM_storage"
 model = 'notloaded'
 isLoaded = False
 

@@ -1,7 +1,12 @@
-from . import armaData
 from pmdarima.arima import auto_arima
 import warnings
 import pandas as pd
+import datetime
+
+
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from .. import averageError as ae
+from .. import dataGeter
 
 import warnings
 warnings.filterwarnings('ignore', 'statsmodels.tsa.arima_model.ARMA',
@@ -57,3 +62,33 @@ def PredictFromDF(df, pre_len):
     res['predValue'] = pred
     res.columns = ['date', 'predValue']
     return res
+
+# sensor_code is a string, pre_len is a int, startdate a datetie.datetime
+# Return a prediction from now of pre_len values from the sensor
+# if a date is spécified, it will return the prediction starting at the star_date
+
+
+def PredictFromSensor(sensor_code, pre_len, pred_starting_date=0):
+    if(pred_starting_date == 0):
+        measures = dataGeter.GetLastMeasures(sensor_code)
+        return PredictFromList(measures, pre_len)
+    else:
+        start_date = pred_starting_date - datetime.timedelta(days=5)
+        measures = dataGeter.GetMeasures(start_date, 5, sensor_code)
+        return PredictFromList(measures, pre_len)
+
+
+# return a list of metrics calculated
+# [rmse, mae, mse, mape, r2score]
+# pre_len is the size of prediction
+# data_size is the number of timeseries used to make the average
+def ComputeError(pre_len, data_size):
+    print("Error computing will take few minutes...")
+    data = ae.GetRandomTimeSeries(data_size)
+    tsData, tsReal = ae.CutTimeSeries(data, 24, pre_len)
+
+    tsPred = []
+    for ts in tsData:
+        tsPred.append(PredictFromList(ts, pre_len))
+
+    return ae.ComputeMetrics(tsData, tsPred, tsReal)

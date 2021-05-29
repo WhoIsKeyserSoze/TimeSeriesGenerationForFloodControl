@@ -23,7 +23,7 @@ if(os == "Linux"):
 elif(os == "Windows"):
     separator = '\\'
 else:
-    warnings.warn("OS not supported, get the fuck out of my library with your shitty OS! You trash, go DL Windows or Linux! è.é")
+    warnings.warn("OS not supported")
 
 model_path = __file__[:-7] + separator + "GRU_storage"
 model = 'notloaded'

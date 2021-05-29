@@ -12,7 +12,6 @@ def date(couple):
     return list(liste1)
 
 def ShowMeasures(*stList) :                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-
     i = 0
     for st in stList :
         if( st != []) :

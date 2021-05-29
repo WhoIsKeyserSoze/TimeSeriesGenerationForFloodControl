@@ -1,8 +1,9 @@
 import datetime
-import pandas as pd
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
+
+import datetime
+from .. import averageError as ae
 
 # Check for stationarity
 def checkForStationarity(x):
@@ -23,7 +24,7 @@ def stationarize(df, iterMax):
         df['height'] = df['height'] - df['height'].shift(dif)
         isStationary = checkForStationarity(df['height'].dropna())
 
-    return df, isStationary
+    return df, dif
 
 def analyse_data(df):
     # df.sort_index(inplace=True)

@@ -23,7 +23,7 @@ if(os == "Linux"):
 elif(os == "Windows"):
     separator = '\\'
 else:
-    warnings.warn("OS not supported, get the fuck out of my library with your shitty OS! You trash, go DL Windows or Linux! è.é")
+    warnings.warn("OS not supported")
 
 model_path = __file__[:-10] + separator + "BILSTM_storage"
 model = 'notloaded'
@@ -38,8 +38,8 @@ isLoaded = False
 def PredictFromList(measure_list, pred_len) :
 
     #checking measure_list size
-    if(len(measure_list) < 30) :
-        Warning.warn("TimeSeriesGenerator.BILSTM.PredictFromList : Not enought data. Make sure to give at least 30 measures")
+    if(len(measure_list) < 24) :
+        Warning.warn("TimeSeriesGenerator.BILSTM.PredictFromList : Not enought data. Make sure to give at least 24 measures")
         return []
 
     # data convertion section 
