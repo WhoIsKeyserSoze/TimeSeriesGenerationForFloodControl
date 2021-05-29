@@ -13,8 +13,17 @@ import numpy
 from . import LSTMdata
 from .. import dataGeter
 from .. import averageError as ae
+import platform
+import warnings
 
-model_path = __file__[:-8] + "\\network_storage"
+if(platform.system() == 'Linux') :
+    separator = '/'
+
+elif(platform.system() == 'Windows') :
+        separator = '\\'
+else :
+    warnings.warn("operating system not supported")
+model_path = __file__[:-8] + separator + "network_storage"
 model = 'notloaded'
 isLoaded = False
 
@@ -28,7 +37,7 @@ def PredictFromList(measure_list, pred_len) :
 
     #checking measure_list size
     if(len(measure_list) < 24) :
-        Warning.warn("TimeSeriesGenerator.LSTM.PredictFromList : Not enought data. Make sure to give at least 24 measures")
+        warnings.warn("TimeSeriesGenerator.LSTM.PredictFromList : Not enought data. Make sure to give at least 24 measures")
         return []
 
     # data convertion section 

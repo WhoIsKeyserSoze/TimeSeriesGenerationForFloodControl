@@ -1,16 +1,21 @@
 import datetime
-
 import TimeSeriesPredictor as tsp
 
-date = datetime.date(2021, 5, 19)
-sensor_code = 'O711502001'
+date = datetime.date(2021, 5, 11)
+sensor_code = 'Y142202001'
 
 measures_list = tsp.dataGeter.GetMeasures(date, 3, sensor_code)
 
-prediction = []
 data = measures_list[:-24]
-prediction = tsp.LSTM.PredictFromList(measures_list[:-24], 24)
 
-prediction.insert(0, data[-1])
+arma = tsp.arma.PredictFromList(data, 24)
+arima = tsp.arima.PredictFromList(data, 24)
+sarima = tsp.sarima.PredictFromList(data, 24)
+autoarima = tsp.autoarima.PredictFromList(data, 24)
 
-tsp.graph.ShowMeasures(measures_list, prediction)
+arma.insert(0, data[-1])
+arima.insert(0, data[-1])
+sarima.insert(0, data[-1])
+autoarima.insert(0, data[-1])
+
+tsp.graph.ShowMeasures(measures_list, arma, arima, sarima, autoarima)
