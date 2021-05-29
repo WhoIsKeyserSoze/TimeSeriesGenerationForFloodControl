@@ -1,4 +1,4 @@
-import dataGeter3 as dataGeter
+from .. import dataGeter
 import datetime
 import pandas 
 import numpy

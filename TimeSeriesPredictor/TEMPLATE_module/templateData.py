@@ -1,3 +1,16 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#   THIS IS A TEMPLATE YOU NEED TO MODIFY TO ADD A NEW NEURAL NETWORK ALGORITHM !   #
+#         Follow the following instructions to complete this template well.         #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                                                                   #
+# This template is to modify only if you want to change the input length or the     #
+# forecast length.                                                                  #         
+#                                                                                   #
+# TimeSeriesGenerator(...) functions may be modify to fit with your data            #                                                                         
+#                                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
 from .. import dataGeter
 import datetime
 import pandas 
@@ -103,8 +116,9 @@ def timeSeriesGenerator(seriesList, rawSeriesLen, newSeries_len):
         for j in range( int((rawSeriesLen-1)/newSeries_len) ) :
             newSerie = []
             for k in range(newSeries_len) :
-                newSerie.append([seriesList[i][j*24 + k][0]])
+                newSerie.append([seriesList[i][j*newSeries_len + k][0]])
             data.append(newSerie)
-            targets.append([seriesList[i][24*j + 24]])
+            targets.append([seriesList[i][newSeries_len*j + newSeries_len]])
         
     return [numpy.array(data), numpy.array(targets)]
+

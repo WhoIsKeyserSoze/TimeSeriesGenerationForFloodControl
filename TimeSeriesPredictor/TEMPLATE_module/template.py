@@ -1,3 +1,27 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#   THIS IS A TEMPLATE YOU NEED TO MODIFY TO ADD A NEW NEURAL NETWORK ALGORITHM !   #
+#         Follow the following instructions to complete this template well.         #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# The lines you need to modify will be flaged by for example : #3#                  #
+#                                                                                   #   
+# ALGO = your algorithm name                                                        #
+#                                                                                   #
+# After naming your algorithm (like LSTM, GRU, BILSTM...), you can modify the code  #
+#                                                                                   #
+# * Line 38 : LSTMdata -> ALGOdata                                                  #
+# * Line 50 : 8 -> Length of your algorithm name + 4 (example LSTM -> 4+4 = 8)      #
+# * Line 50 : LSTM_storage -> ALGO_storage                                          #
+# * Line 64 : LSTM -> ALGO                                                          #
+# * Line 73 : LSTMdata -> ALGOdata                                                  #
+# * Line 95 : LSTMdata -> ALGOdata                                                  #
+# * Lines 60, 64, 65, 92, 128 : 24 -> Number of measures your algorithm takes as    #
+#                                                                         input     #
+#   WARNING : If you modify the number of measures your algorithm takes, don't      #  
+#   forget to modify it in the templatedata.py as well.                             #
+#                                                                                   #
+# Don't forget to delete all the flags #?#                                          #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
 import datetime
 import os
 import platform
@@ -13,7 +37,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 from tensorflow import keras
 import numpy
-from . import BILSTMdata
+from . import templateData   #1#
 from .. import dataGeter
 from .. import averageError as ae
 
@@ -25,7 +49,7 @@ elif(os == "Windows"):
 else:
     warnings.warn("OS not supported, get the fuck out of my library with your shitty OS! You trash, go DL Windows or Linux! è.é")
 
-model_path = __file__[:-10] + separator + "BILSTM_storage"
+model_path = __file__[:-8] + separator + "LSTM_storage"  #2# #3#
 model = 'notloaded'
 isLoaded = False
 
@@ -34,12 +58,12 @@ isLoaded = False
 # makes 'pre_len' value prediction
 # a measure_list is a list of tuple (datetime.datetime, float)
 
-# If the measure_list does not make at least 30 measures, the BILSTM network won't be able to make predictions
+# If the measure_list does not make at least 24 measures, the network won't be able to make predictions  #4#
 def PredictFromList(measure_list, pred_len) :
 
     #checking measure_list size
-    if(len(measure_list) < 30) :
-        Warning.warn("TimeSeriesGenerator.BILSTM.PredictFromList : Not enought data. Make sure to give at least 30 measures")
+    if(len(measure_list) < 24) :
+        warnings.warn("TimeSeriesGenerator.LSTM.PredictFromList : Not enought data. Make sure to give at least 24 measures") #5# #6#
         return []
 
     # data convertion section 
@@ -48,7 +72,8 @@ def PredictFromList(measure_list, pred_len) :
     for measure in measure_list :
         value_list.append([measure[1]])
     # But it needs normalised data
-    value_list,minV, maxV = BILSTMdata.normalize_array(numpy.array(value_list))
+    value_list, minV, maxV = templateData.normalize_array(
+        numpy.array(value_list))  # 7#
     temp = []
     for value in value_list :
         temp.append([value[0]])
@@ -70,7 +95,8 @@ def PredictFromList(measure_list, pred_len) :
         value_list.append([pred[0][0]])
         predictions.append(pred[0][0])
     # unormalise predictions
-    predictions = BILSTMdata.un_normalize_array(numpy.array(predictions), minV, maxV)
+    predictions = templateData.un_normalize_array(
+        numpy.array(predictions), minV, maxV)  # 8#
 
     # convert prediction to list of (date, float)
     # we have float, just need to add dates to them

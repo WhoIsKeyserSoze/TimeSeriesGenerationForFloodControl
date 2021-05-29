@@ -1,5 +1,8 @@
 import datetime
 import os
+import platform
+import warnings
+
 from sklearn import metrics
 # removes tensor flow information
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
@@ -10,11 +13,19 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 from tensorflow import keras
 import numpy
-from LSTM_module import LSTMdata
-import dataGeter
-import averageError as ae
+from . import GRUdata
+from .. import dataGeter
+from .. import averageError as ae
 
-model_path = r".\GRU_module\GRU_storage"
+os = platform.system()
+if(os == "Linux"):
+    separator = '/'
+elif(os == "Windows"):
+    separator = '\\'
+else:
+    warnings.warn("OS not supported, get the fuck out of my library with your shitty OS! You trash, go DL Windows or Linux! è.é")
+
+model_path = __file__[:-7] + separator + "GRU_storage"
 model = 'notloaded'
 isLoaded = False
 
@@ -23,7 +34,7 @@ isLoaded = False
 # makes 'pre_len' value prediction
 # a measure_list is a list of tuple (datetime.datetime, float)
 
-# If the measure_list does not make at least 24 measures, the LSTM network won't be able to make predictions
+# If the measure_list does not make at least 24 measures, the GRU network won't be able to make predictions
 def PredictFromList(measure_list, pred_len) :
 
     #checking measure_list size
@@ -37,7 +48,7 @@ def PredictFromList(measure_list, pred_len) :
     for measure in measure_list :
         value_list.append([measure[1]])
     # But it needs normalised data
-    value_list,minV, maxV = LSTMdata.normalize_array(numpy.array(value_list))
+    value_list,minV, maxV = GRUdata.normalize_array(numpy.array(value_list))
     temp = []
     for value in value_list :
         temp.append([value[0]])
@@ -48,7 +59,7 @@ def PredictFromList(measure_list, pred_len) :
     # load model
     global model
     global isLoaded
-    if( not isLoaded) : 
+    if(not isLoaded) : 
         model = keras.models.load_model(model_path)
         isLoaded = True
 
@@ -59,7 +70,7 @@ def PredictFromList(measure_list, pred_len) :
         value_list.append([pred[0][0]])
         predictions.append(pred[0][0])
     # unormalise predictions
-    predictions = LSTMdata.un_normalize_array(numpy.array(predictions), minV, maxV)
+    predictions = GRUdata.un_normalize_array(numpy.array(predictions), minV, maxV)
 
     # convert prediction to list of (date, float)
     # we have float, just need to add dates to them
