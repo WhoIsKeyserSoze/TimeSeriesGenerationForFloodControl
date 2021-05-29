@@ -32,9 +32,21 @@ def PredictFromDF(df, pre_len):
 
     p = 1
     q = 1
+    d = 1
+    m = 60
+
+    isStatio = armaData.checkForStationarity(df['height'])
+    if(not isStatio):
+        print("The timeseries is not stationary, try to stationarise it...")
+        df, isStatio = armaData.stationarize(df, 10)
+        if(not isStatio):
+            print("The timeseries is not stationary, return no predictions")
+            return []
+        else:
+            print("sucess")
 
     model = sm.tsa.statespace.SARIMAX(df['height'].dropna(), order=(
-        p, 0, q), seasonal_order=(p, 0, q, 60))
+        p, d, q), seasonal_order=(p, d, q, m))
 
     model_fit = model.fit(disp=0)
 

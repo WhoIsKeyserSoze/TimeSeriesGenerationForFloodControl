@@ -14,6 +14,18 @@ def PredictFromList(measures_list, pre_len):
     pred = pred.values.tolist()
     res = []
 
+    isStatio = armaData.checkForStationarity(df['height'])
+    if( not isStatio) :
+        print("The timeseries is not stationary, try to stationarise it...")
+        df, isStatio = armaData.stationarize(df,10)
+        if(not isStatio) :
+            print("The timeseries is not stationary, return no predictions")
+            return []
+        else :
+            print("sucess")
+
+
+
     for i in range(0, len(pred)):
         res.append((pred[i][0], pred[i][1]))
     

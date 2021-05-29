@@ -29,8 +29,19 @@ def PredictFromDF(df, pre_len):
 
     p = 1
     q = 1
+    d = 1
 
-    model = ARIMA(df['height'].dropna(), order=(p, 0, q))
+    isStatio = armaData.checkForStationarity(df['height'])
+    if(not isStatio):
+        print("The timeseries is not stationary, try to stationarise it...")
+        df, isStatio = armaData.stationarize(df, 10)
+        if(not isStatio):
+            print("The timeseries is not stationary, return no predictions")
+            return []
+        else:
+            print("sucess")
+
+    model = ARIMA(df['height'].dropna(), order=(p, d, q))
 
     model_fit = model.fit()
 

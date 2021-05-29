@@ -2,7 +2,7 @@ import datetime
 import TimeSeriesPredictor as tsp
 
 date = datetime.date(2021, 5, 11)
-sensor_code = 'Y142202001'
+sensor_code = 'V523401001'
 
 measures_list = tsp.dataGeter.GetMeasures(date, 3, sensor_code)
 

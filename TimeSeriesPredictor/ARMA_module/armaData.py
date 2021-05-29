@@ -6,23 +6,24 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 
 # Check for stationarity
 def checkForStationarity(x):
-    res = adfuller(x)
-    ADF = res[0]
-    pValue = res[1]
-    return (ADF < 0 and pValue < 0.05)
+    stationary = False
+    result = adfuller(x)
+    if result[1] <= 0.05:
+        stationary = True
+    return stationary
 
-def stationarize(df):
+def stationarize(df, iterMax):
     # stationarisation
     isStationary = False
     dif = 0
-    while (not isStationary):
+    i = 0
+    while (not isStationary and i<iterMax) :
         dif += 1
         #Y(t) = Y(t)-Y(t-1)
-        df['height_diff'] = df['height'] - df['height'].shift(dif)
-        isStationary = checkForStationarity(df['height_diff'].dropna())
+        df['height'] = df['height'] - df['height'].shift(dif)
+        isStationary = checkForStationarity(df['height'].dropna())
 
-    print("Data is now stationarized using (", dif,") difference")
-    return df,dif
+    return df, isStationary
 
 def analyse_data(df):
     # df.sort_index(inplace=True)
