@@ -2,7 +2,7 @@ import os
 
 from tensorflow import keras
 
-from TimeSeriesPredictor import LSTM
+import TimeSeriesPredictor as tsp
 
 # This programme train a neural network and save it
 # It will try to download, store and prepare data from hubeau api
@@ -16,8 +16,8 @@ from TimeSeriesPredictor import LSTM
 
 # change it to the location where you want to save the data required to train the network
 
-data_path = __file__[:-8] + "\\LSTM_module\\random_data_storage"
-network_storage = __file__[:-8] + "\\LSTM_module\\anotherfile"
+data_path = ".\\data"
+network_storage = "lstm"
 
 trainning_proportion = 0.85
 nb_rawSeries_to_download = 100
@@ -29,11 +29,11 @@ rawSeries_len = 29*24 #29 days and 24 hours of measurments
 
 # then load them into a nice list
 
-rawData = LSTMdata.load_data(data_path, rawSeries_len)
-rawData = LSTMdata.normalize_dataset(rawData)
+rawData = tsp.LSTM.LSTMdata.load_data(data_path, rawSeries_len)
+rawData = tsp.LSTM.LSTMdata.normalize_dataset(rawData)
 
 # making many nb_day long time series from the raw data
-dataset = LSTMdata.timeSeriesGenerator(rawData, rawSeries_len, 24)
+dataset = tsp.LSTM.LSTMdata.timeSeriesGenerator(rawData, rawSeries_len, 24)
 
 p = int(trainning_proportion * len(dataset[0]))
 trainData_x = dataset[0][:p]
@@ -63,11 +63,11 @@ model.compile(loss='mse',
 
 history = model.fit(x=trainData_x, y=trainData_y,
                     validation_data=(testData_x, testData_y),
-                    epochs=1)
+                    epochs=25)
 
 #---------------#
 # save          #
 #---------------#
 
 # network_storage is a path, we just want the directory name here
-model.save()
+model.save(network_storage)

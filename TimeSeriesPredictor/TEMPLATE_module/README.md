@@ -12,3 +12,5 @@ Follow the following steps to add one :
   in them.
 * Make sure the save of your neural network have to be in a folder named "ALGO_storage" 
   and this folder being placed in the folder "ALGO_module".
+* Link your ALGO to the rest of the package by adding
+  "from .ALGO_module import algo" in the __init__.py file

@@ -1,10 +1,8 @@
 import os
 
-import GRUdata
-
 from tensorflow import keras
 
-
+import TimeSeriesPredictor as tsp
 
 # This programme train a neural network and save it
 # It will try to download, store and prepare data from hubeau api
@@ -14,12 +12,12 @@ from tensorflow import keras
 
 #---------------#
 # Prepare data  #
-#---------------# 
+#---------------#
 
 # change it to the location where you want to save the data required to train the network
-data_path = os.getcwd()
-data_path += r"\GRU_module\random_data_storage"
-network_storage = r".\GRU_storage"
+
+data_path = ".\\data"
+network_storage = "gru"
 
 trainning_proportion = 0.85
 nb_rawSeries_to_download = 100
@@ -31,11 +29,11 @@ rawSeries_len = 29*24 #29 days and 24 hours of measurments
 
 # then load them into a nice list
 
-rawData = GRUdata.load_data(data_path, rawSeries_len)
-rawData = GRUdata.normalize_dataset(rawData)
+rawData = tsp.GRU.GRUdata.load_data(data_path, rawSeries_len)
+rawData = tsp.GRU.GRUdata.normalize_dataset(rawData)
 
 # making many nb_day long time series from the raw data
-dataset = GRUdata.timeSeriesGenerator(rawData, rawSeries_len, 30)
+dataset = tsp.GRU.GRUdata.timeSeriesGenerator(rawData, rawSeries_len, 24)
 
 p = int(trainning_proportion * len(dataset[0]))
 trainData_x = dataset[0][:p]
@@ -50,11 +48,8 @@ testData_y = dataset[1][p:]
 
 model = keras.models.Sequential()
 # Input layer
-model.add(keras.layers.GRU(units=200, return_sequences=True,
-              input_shape=[24, 1]))
-model.add(keras.layers.Dropout(0.2))
-# Hidden layer
-model.add(keras.layers.GRU(units=200))
+model.add(keras.layers.InputLayer(input_shape=(24, 1)))
+model.add(keras.layers.GRU(128))
 model.add(keras.layers.Dropout(0.2))
 model.add(keras.layers.Dense(units=1))
 
@@ -76,4 +71,4 @@ history = model.fit(x=trainData_x, y=trainData_y,
 #---------------#
 
 # network_storage is a path, we just want the directory name here
-model.save(network_storage[2:])
+model.save(network_storage)

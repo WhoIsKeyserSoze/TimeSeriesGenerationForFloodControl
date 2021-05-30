@@ -1,28 +1,17 @@
 import datetime
 import TimeSeriesPredictor as tsp
 
-date = datetime.date(2021, 5, 18)
-sensor_code = 'K617313002'
+date = datetime.date(2021, 5, 10)
+sensor_code = 'K480001001'
+duration = 2  # jours
 
-measures_list = tsp.dataGeter.GetMeasures(date, 2, sensor_code)
-
-pre_len = 24
-data = measures_list[:-1 * pre_len]
-
-arma = tsp.arma.PredictFromList(data, 24)
-arima = tsp.arima.PredictFromList(data, 24)
-sarima = tsp.sarima.PredictFromList(data, 24)
-autoarima = tsp.autoarima.PredictFromList(data, 24)
-lstm = tsp.LSTM.PredictFromList(data, pre_len)
-bilstm = tsp.BILSTM.PredictFromList(data, pre_len)
-gru = tsp.GRU.PredictFromList(data, pre_len)
-
-arma.insert(0, data[-1])
-arima.insert(0, data[-1])
-sarima.insert(0, data[-1])
-autoarima.insert(0, data[-1])
-lstm.insert(0, data[-1])
-bilstm.insert(0, data[-1])
-gru.insert(0, data[-1])
-
-tsp.graph.ShowMeasures(measures_list, arma, arima, sarima, autoarima)
+# récupères les 2 jours de mesures
+measures_list = tsp.dataGeter.GetMeasures(date, duration, sensor_code)
+# Sépare ces mesures en deux
+data, real = measures_list[:24], measures_list[-25:]
+# fait une prédiction à partir de la première partie
+pred = tsp.LSTM.PredictFromList(data, 24)
+# ajoute en début de la prédiction la dernière mesure du data, afin qu'il n'y ai pas de coupures sur le graph
+pred.insert(0, data[-1])
+# affiche la première partie, la prédiction et la réalité
+tsp.graph.ShowMeasures(data, real, pred)

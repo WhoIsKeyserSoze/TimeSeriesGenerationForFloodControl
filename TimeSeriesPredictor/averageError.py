@@ -115,4 +115,4 @@ def ComputeMetrics(tsData, tsPred, tsReal) :
     for k in range(len(metrics)):
         metrics[k] = metrics[k] / total
 
-    return metrics, tsData, tsPred, tsReal
+    return metrics

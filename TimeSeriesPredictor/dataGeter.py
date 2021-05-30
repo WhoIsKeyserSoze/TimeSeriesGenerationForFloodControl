@@ -21,7 +21,7 @@ def takeDate(measure) :
 # (datetime.datetime, int, str, str)
 # note that certain sensor does not have measure linked to them
 # in that case datageter will return an empty list
-def GetMeasures(start_date, duration, sensor_code, measure_type = 'H', time_step = 60) :
+def GetMeasures(start_date, duration, sensor_code, time_step = 60) :
 
     # Checks if all arguments are valids
     end_date = start_date + datetime.timedelta(days = duration)
@@ -29,6 +29,7 @@ def GetMeasures(start_date, duration, sensor_code, measure_type = 'H', time_step
         return []
 
     # Builds URL
+    measure_type = 'H'
     URL = base_obs_url
 
     URL += (sensor_code_format + str(sensor_code) + '&')
@@ -92,10 +93,11 @@ def get_data(URL) :
     # Check return code from the Hubeau API if there is no issue
     return_code=str(webUrl.getcode())
     if(return_code != "200" and return_code != "206") :
-        Warning.warn("dataGeter.get_data : Server responded with error code : " + str(return_code))
+        warnings.warn("dataGeter.get_data : Server responded with error code : " + str(return_code))
         return ""
     if(return_code == "206") :
-        Warning.warn("dataGeter.get_data : Server responded with partial data")
+        warnings.warn(
+            "dataGeter.get_data : Server responded with partial data")
     # Gather all the info requested
     data=webUrl.read()
 
